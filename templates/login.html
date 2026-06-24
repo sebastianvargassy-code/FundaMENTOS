@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión - Minimarket Nelly</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .card-login {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+    }
+    /* Estilizado sutil para que los inputs se sientan integrados al grupo */
+    .input-group-text {
+      border-right: none;
+    }
+    .form-control {
+      border-left: none;
+    }
+    .form-control:focus {
+      border-color: #dee2e6;
+      box-shadow: none;
+      background-color: #fff !important;
+    }
+  </style>
+</head>
+<body class="bg-light d-flex flex-column min-vh-100">
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-3" href="/">
+        <i class="bi bi-shop text-warning me-2"></i>Minimarket <span class="text-warning">Nelly</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <div class="navbar-nav gap-3 text-center mt-3 mt-lg-0 align-items-center">
+          <a class="nav-link" href="/"><i class="bi bi-house-door me-1"></i> Inicio</a>
+          <a class="nav-link" href="/productos"><i class="bi bi-basket me-1"></i> Productos</a>
+          <a class="nav-link" href="/contactos"><i class="bi bi-envelope me-1"></i> Contacto</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-auto py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        
+        <div class="card card-login p-3 p-sm-4 bg-white">
+          <div class="card-body">
+            
+            <div class="text-center mb-4">
+              <div class="text-warning display-4 mb-2"><i class="bi bi-person-circle"></i></div>
+              <h2 class="fw-bold h4 text-dark m-0">Iniciar sesión</h2>
+              <p class="text-muted small mt-1">Ingresa al panel administrativo</p>
+            </div>
+
+            {% if error %}
+              <div class="alert alert-danger d-flex align-items-center small py-2 border-0 shadow-sm mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                <div>{{ error }}</div>
+              </div>
+            {% endif %}
+
+            <form method="POST">
+              
+              <div class="mb-3">
+                <label for="username" class="form-label text-secondary small fw-semibold">Usuario</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-person-fill"></i></span>
+                  <input type="text" class="form-control bg-light" id="username" name="username" placeholder="Nombre de usuario" required>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="password" class="form-label text-secondary small fw-semibold">Contraseña</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-lock-fill"></i></span>
+                  <input type="password" class="form-control bg-light" id="password" name="password" placeholder="••••••••" required>
+                </div>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-warning fw-bold shadow-sm py-2 text-dark">
+                  Ingresar al Sistema <i class="bi bi-box-arrow-in-right ms-1"></i>
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-white text-center py-4 mt-auto border-top border-secondary">
+    <div class="container text-muted small">
+      &copy; 2026 <strong class="text-warning">Minimarket Nelly</strong>. Todos los derechos reservados.
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ titulo }} - Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <style>
+    :root {
+      --sidebar-bg: #1e1e2d;
+      --gold-brand: #ffc107;
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f5f7; }
+    .navbar-admin { background: var(--sidebar-bg); }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-admin shadow-sm py-3 mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/admin">
+        <i class="fa-solid fa-shop text-warning me-2"></i>Admin <span class="text-warning">Nelly</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="adminNavbar">
+        <div class="navbar-nav gap-2 text-center mt-3 mt-lg-0">
+          <a class="nav-link" href="/admin"><i class="fa-solid fa-chart-pie me-1"></i> Dashboard</a>
+          <a class="nav-link active" href="/admin/productos"><i class="fa-solid fa-boxes-stacked me-1"></i> Productos</a>
+          <a class="nav-link" href="/admin/clientes"><i class="fa-solid fa-users me-1"></i> Clientes</a>
+          <a class="btn btn-outline-danger btn-sm px-3 ms-lg-2" href="/logout"><i class="fa-solid fa-right-from-bracket me-1"></i> Salir</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-auto py-4">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        
+        <div class="card border-0 shadow-sm rounded-3 bg-white p-3 p-sm-4">
+          <div class="card-body">
+            
+            <div class="d-flex align-items-center gap-3 border-bottom pb-3 mb-4">
+              <div class="bg-warning-subtle text-warning px-3 py-2 rounded-3 fs-3">
+                <i class="fa-solid {% if producto %}fa-pen-to-square{% else %}fa-plus-circle{% endif %}"></i>
+              </div>
+              <div>
+                <h2 class="h4 fw-bold text-dark m-0">{{ titulo }}</h2>
+                <p class="text-muted small m-0">Gestión de datos del catálogo</p>
+              </div>
+            </div>
+
+            <form method="POST">
+              
+              <div class="mb-3">
+                <label for="nombre" class="form-label text-secondary small fw-semibold">Nombre del Producto</label>
+                <input type="text" class="form-control bg-light" id="nombre" name="nombre" 
+                       value="{{ producto.nombre if producto else '' }}" placeholder="Ej. Arroz Costeño 1kg" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="peso" class="form-label text-secondary small fw-semibold">Peso / Presentación</label>
+                <input type="text" class="form-control bg-light" id="peso" name="peso" 
+                       value="{{ producto.peso if producto else '' }}" placeholder="Ej. 1 kg, 750 ml, 6 un" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="precio" class="form-label text-secondary small fw-semibold">Precio de Venta</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-secondary-subtle fw-semibold">S/</span>
+                  <input type="number" step="0.01" class="form-control bg-light" id="precio" name="precio" 
+                         value="{{ producto.precio if producto else '' }}" placeholder="0.00" required>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="img" class="form-label text-secondary small fw-semibold">Nombre o URL de la Imagen</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-secondary-subtle"><i class="fa-solid fa-image"></i></span>
+                  <input type="text" class="form-control bg-light" id="img" name="img" 
+                         value="{{ producto.img if producto else '' }}" placeholder="Ej. arroz.jpg" required>
+                </div>
+                <div class="form-text text-muted text-xs small">Puedes colocar el nombre del archivo dentro de /static/img/.</div>
+              </div>
+
+              <div class="d-flex align-items-center justify-content-end gap-2 border-top pt-3">
+                <a href="/admin/productos" class="btn btn-light border fw-semibold px-4">Cancelar</a>
+                <button type="submit" class="btn btn-warning fw-bold px-4 shadow-sm">
+                  Guardar <i class="fa-solid fa-floppy-disk ms-1"></i>
+                </button>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center text-muted py-3 mt-auto border-top bg-white">
+    <small>&copy; 2026 <strong>Minimarket Nelly</strong>. Control de Inventario.</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

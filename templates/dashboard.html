@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Control | Minimarket Nelly</title>
+  
+  <!-- Bootstrap 5 CDN CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --sidebar-bg: #1e1e2d;
+      --gold-dark: #4a2c0a;
+      --gold-light: #6b3f10;
+      --gold-brand: #ffc107;
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f5f7; }
+    .sidebar { width: 260px; height: 100vh; position: fixed; background: var(--sidebar-bg); z-index: 100; transition: all 0.3s; }
+    .sidebar .nav-link { color: #a2a3b7; padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 10px; border-radius: 4px; margin: 0.2rem 0.8rem; text-decoration: none; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { background: rgba(255,193,7, 0.1); color: var(--gold-brand); font-weight: bold; }
+    .main-content { margin-left: 260px; padding: 2rem; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+    .kpi-card { border: none; border-radius: 12px; color: white; overflow: hidden; position: relative; transition: transform 0.2s; }
+    .kpi-card:hover { transform: translateY(-3px); }
+    .kpi-card .icon { position: absolute; right: 15px; bottom: 15px; font-size: 3.5rem; opacity: 0.2; }
+    @media (max-width: 992px) { .sidebar { margin-left: -260px; } .main-content { margin-left: 0; } .sidebar.open { margin-left: 0; } }
+  </style>
+</head>
+<body class="d-flex">
+
+  <!-- ========================================== -->
+  <!-- SIDEBAR IZQUIERDO (ORIGINAL)               -->
+  <!-- ========================================== -->
+  <div class="sidebar d-flex flex-column justify-content-between py-3 shadow shadow-lg" id="sidebarMenu">
+    <div>
+      <div class="px-4 py-3 border-bottom border-secondary mb-3">
+        <h4 class="text-white fw-bold m-0"><i class="fa-solid fa-shop text-warning me-2"></i>Nelly <span class="fs-6 text-muted fw-normal">Admin</span></h4>
+      </div>
+      <nav class="nav flex-column">
+        <a href="/admin" class="nav-link active"><i class="fa-solid fa-chart-pie"></i> Panel de Control</a>
+        <a href="/admin/productos" class="nav-link"><i class="fa-solid fa-boxes-stacked"></i> Ver Inventario</a>
+        <a href="/admin/productos/nuevo" class="nav-link"><i class="fa-solid fa-plus-circle"></i> Nuevo Producto</a>
+        <a href="/admin/clientes" class="nav-link"><i class="fa-solid fa-users"></i> Clientes</a>
+        <div class="border-top border-secondary my-2 mx-3"></div>
+        <a href="/" class="nav-link"><i class="fa-solid fa-house"></i> Ir a la tienda</a>
+      </nav>
+    </div>
+    <div class="px-3">
+      <a href="/logout" class="btn btn-outline-danger w-100 btn-sm"><i class="fa-solid fa-right-from-bracket me-1"></i> Cerrar sesión</a>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CONTENIDO DE TRABAJO PRINCIPAL            -->
+  <!-- ========================================== -->
+  <div class="main-content flex-grow-1">
+    
+    <div>
+      <!-- NAVBAR SUPERIOR -->
+      <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm">
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-light d-lg-none" onclick="document.getElementById('sidebarMenu').classList.toggle('open')">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <h1 class="h3 fw-bold m-0 text-dark">Dashboard de Operaciones</h1>
+        </div>
+        <div class="text-muted small fw-semibold">
+          <i class="fa-regular fa-clock me-1"></i> Sincronizado: <span class="text-dark">{{ hora_actual }}</span>
+        </div>
+      </div>
+
+      <!-- TARJETAS DE INDICADORES (KPIs ORIGINALES) -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+          <div class="card kpi-card shadow-sm h-100" style="background: linear-gradient(135deg, #1cc88a, #13855c);">
+            <div class="card-body">
+              <span class="text-white-50 text-uppercase small fw-bold">Caja Histórica total</span>
+              <h2 class="display-6 fw-bold my-2">S/ {{ "%.2f"|format(ventas_mes) }}</h2>
+              <p class="m-0 small text-white-50"><i class="fa-solid fa-wallet me-1"></i> Flujo total en memoria</p>
+              <div class="icon"><i class="fa-solid fa-scale-balanced"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+          <div class="card kpi-card shadow-sm h-100" style="background: linear-gradient(135deg, #f6c23e, #dda20a);">
+            <div class="card-body">
+              <span class="text-white-50 text-uppercase small fw-bold">Precio Promedio</span>
+              <h2 class="display-6 fw-bold my-2">S/ {{ "%.2f"|format(precio_promedio) }}</h2>
+              <p class="m-0 small text-white-50"><i class="fa-solid fa-tags me-1"></i> Por unidad de producto</p>
+              <div class="icon"><i class="fa-solid fa-coins"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+          <div class="card kpi-card shadow-sm h-100" style="background: linear-gradient(135deg, #4e73df, #224abe);">
+            <div class="card-body">
+              <span class="text-white-50 text-uppercase small fw-bold">Items en Catálogo</span>
+              <h2 class="display-6 fw-bold my-2">{{ total_productos }}</h2>
+              <p class="m-0 small text-white-50"><i class="fa-solid fa-arrow-up me-1"></i> Variación: +{{ variacion_productos }}</p>
+              <div class="icon"><i class="fa-solid fa-box-open"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+          <div class="card kpi-card shadow-sm h-100" style="background: linear-gradient(135deg, #e74a3b, #be2617);">
+            <div class="card-body">
+              <span class="text-white-50 text-uppercase small fw-bold">Clientes Base</span>
+              <h2 class="display-6 fw-bold my-2">{{ total_clientes }}</h2>
+              <p class="m-0 small text-white-50"><i class="fa-solid fa-user-plus me-1"></i> Registrados en la base</p>
+              <div class="icon"><i class="fa-solid fa-users"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE GRÁFICOS ANALÍTICOS (HISTOGRAMA Y CIRCULARES) -->
+      <div class="row g-4 mb-4">
+        
+        <!-- 1. HISTOGRAMA DE FRECUENCIA: Registros del Sistema por Día -->
+        <div class="col-xl-6">
+          <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-white py-3 border-0">
+              <h5 class="m-0 fw-bold text-dark"><i class="fa-solid fa-chart-bar text-warning me-2"></i>Histograma de Nuevos Registros</h5>
+            </div>
+            <div class="card-body">
+              <div style="position: relative; height: 320px;">
+                <canvas id="registrosHistogramaChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. GRÁFICO CIRCULAR: Canales y Métodos de Pago -->
+        <div class="col-xl-3 col-md-6">
+          <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-white py-3 border-0">
+              <h5 class="m-0 fw-bold text-dark"><i class="fa-solid fa-credit-card text-warning me-2"></i>Uso de Canales</h5>
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center">
+              <div style="position: relative; height: 210px;" class="mb-3">
+                <canvas id="metodosCircularChart"></canvas>
+              </div>
+              <div class="small">
+                <div class="d-flex justify-content-between border-bottom py-1">
+                  <span><i class="fa-solid fa-circle text-success me-1"></i> Efectivo</span>
+                  <span class="fw-bold text-muted small">Caja</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom py-1">
+                  <span><i class="fa-solid fa-circle text-primary me-1"></i> Tarjeta</span>
+                  <span class="fw-bold text-muted small">POS</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                  <span><i class="fa-solid fa-circle text-info me-1"></i> QR Yape</span>
+                  <span class="fw-bold text-muted small">Móvil</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. GRÁFICO CIRCULAR: Estructura de Precios Comercial -->
+        <div class="col-xl-3 col-md-6">
+          <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-white py-3 border-0">
+              <h5 class="m-0 fw-bold text-dark"><i class="fa-solid fa-pie-chart text-warning me-2"></i>Estructura de Precios</h5>
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center">
+              <div style="position: relative; height: 210px;" class="mb-3">
+                <canvas id="preciosCircularChart"></canvas>
+              </div>
+              <div class="small">
+                <div class="d-flex justify-content-between border-bottom py-1">
+                  <span><i class="fa-solid fa-circle text-info me-1"></i> Económico (&lt; S/ 5)</span>
+                  <span class="fw-bold">{{ rango1 }} items</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom py-1">
+                  <span><i class="fa-solid fa-circle text-warning me-1"></i> Intermedio</span>
+                  <span class="fw-bold">{{ rango2 }} items</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                  <span><i class="fa-solid fa-circle text-danger me-1"></i> Premium (&gt; S/ 10)</span>
+                  <span class="fw-bold">{{ rango3 }} items</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- REGISTRO CRÍTICO DE OPERACIONES REALES -->
+      <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-0">
+          <h5 class="m-0 fw-bold text-dark"><i class="fa-solid fa-receipt text-warning me-2"></i>Auditoría de Ventas en Tiempo Real</h5>
+          <span class="badge bg-warning text-dark fw-bold px-3 py-2">{{ ventas|length }} Compras registradas</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle m-0">
+              <thead class="table-light text-uppercase fs-7">
+                <tr>
+                  <th class="ps-4">ID de Ticket</th>
+                  <th>Fecha de Venta</th>
+                  <th>Productos Adquiridos (Detalle)</th>
+                  <th>Canal de Pago</th>
+                  <th class="text-end pe-4">Importe Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for v in ventas %}
+                <tr>
+                  <td class="ps-4 fw-bold text-secondary">#TK-00{{ v.id }}</td>
+                  <td><span class="badge bg-light text-dark border"><i class="fa-regular fa-calendar me-1"></i> {{ v.fecha }}</span></td>
+                  <td>
+                    {% for p in v.productos %}
+                      <span class="badge bg-dark text-white rounded-pill my-1">
+                        {{ p.nombre }} <span class="text-warning">x{{ p.cantidad }}</span> (S/ {{ "%.2f"|format(p.precio) }})
+                      </span>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% if v.metodo_pago == "Tarjeta" %}
+                      <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1.5"><i class="fa-solid fa-credit-card me-1"></i> Tarjeta</span>
+                    {% elif v.metodo_pago == "Yape (QR)" or v.metodo_pago == "Yape" %}
+                      <span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1.5"><i class="fa-solid fa-qrcode me-1"></i> QR Yape</span>
+                    {% else %}
+                      <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1.5"><i class="fa-solid fa-money-bill-wave me-1"></i> Efectivo</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-end pe-4 fw-bold text-success fs-5">S/ {{ "%.2f"|format(v.total) }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="5" class="text-center py-5 text-muted">
+                    <i class="fa-solid fa-cash-register display-4 d-block mb-3 text-black-50"></i>
+                    No se han efectuado compras en la caja del punto de venta web todavía.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="text-center text-muted py-3 mt-4 border-top bg-white rounded shadow-sm">
+      <small>&copy; 2026 <strong>Minimarket Nelly</strong>. Gestión Integral de Tienda.</small>
+    </footer>
+
+  </div>
+
+  <!-- Scripts de Bootstrap 5 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- CONTROL DE COMPONENTES CHART.JS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const labelsDias = {{ dias|tojson }};
+      
+      // 1. CONFIGURACIÓN DE HISTOGRAMA (Barras agrupadas de Frecuencia de Altas)
+      const ctxHisto = document.getElementById('registrosHistogramaChart').getContext('2d');
+      new Chart(ctxHisto, {
+        type: 'bar',
+        data: {
+          labels: labelsDias,
+          datasets: [
+            {
+              label: 'Nuevos Clientes ',
+              data: {{ nuevos_clientes_linea|tojson }},
+              backgroundColor: '#4e73df',
+              borderColor: '#224abe',
+              borderWidth: 1,
+              barPercentage: 0.8,
+              categoryPercentage: 0.7
+            },
+            {
+              label: 'Nuevos Productos ',
+              data: {{ nuevos_productos_linea|tojson }},
+              backgroundColor: '#1cc88a',
+              borderColor: '#13855c',
+              borderWidth: 1,
+              barPercentage: 0.8,
+              categoryPercentage: 0.7
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: { boxWidth: 12 }
+            }
+          },
+          scales: {
+            y: { 
+              beginAtZero: true, 
+              grid: { color: 'rgba(0,0,0,0.05)' },
+              ticks: { stepSize: 1 }
+            },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+
+      // 2. CONTEO DESDE EL ARREGLO DE MEMORIA JINJA PARA GRÁFICO CIRCULAR
+      let cacheEfectivo = 0, cacheTarjeta = 0, cacheYape = 0;
+      const transaccionesEstructura = [
+        {% for v in ventas %}
+          { metodo: "{{ v.metodo_pago }}" },
+        {% endfor %}
+      ];
+      transaccionesEstructura.forEach(t => {
+        if (t.metodo === "Tarjeta") cacheTarjeta++;
+        else if (t.metodo === "Yape (QR)" || t.metodo === "Yape") cacheYape++;
+        else cacheEfectivo++;
+      });
+
+      // RENDER: Gráfico Circular de Canales
+      const ctxCanales = document.getElementById('metodosCircularChart').getContext('2d');
+      new Chart(ctxCanales, {
+        type: 'doughnut',
+        data: {
+          labels: ['Efectivo', 'Tarjeta', 'QR Yape'],
+          datasets: [{
+            data: [cacheEfectivo, cacheTarjeta, cacheYape],
+            backgroundColor: ['#1cc88a', '#4e73df', '#0dcaf0'],
+            borderWidth: 3,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          cutout: '72%'
+        }
+      });
+
+      // 3. RENDER: Gráfico Circular de la Estructura de Precios Original
+      const ctxPrecios = document.getElementById('preciosCircularChart').getContext('2d');
+      new Chart(ctxPrecios, {
+        type: 'doughnut',
+        data: {
+          labels: ['Económico', 'Intermedio', 'Premium'],
+          datasets: [{
+            data: [{{ rango1 }}, {{ rango2 }}, {{ rango3 }}],
+            backgroundColor: ['#0dcaf0', '#ffc107', '#dc3545'],
+            borderWidth: 3,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          cutout: '72%'
+        }
+      });
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ titulo }} - Admin</title>
+  <!-- Bootstrap 5 CDN CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <style>
+    :root {
+      --sidebar-bg: #1e1e2d;
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f5f7; }
+    .navbar-admin { background: var(--sidebar-bg); }
+    .card-form { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- ========================================== -->
+  <!-- NAVBAR SUPERIOR DE ADMINISTRACIÓN          -->
+  <!-- ========================================== -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-admin shadow-sm py-3 mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/admin">
+        <i class="fa-solid fa-shop text-warning me-2"></i>Admin <span class="text-warning">Nelly</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="adminNavbar">
+        <div class="navbar-nav gap-2 text-center mt-3 mt-lg-0">
+          <a class="nav-link" href="/admin"><i class="fa-solid fa-chart-pie me-1"></i> Dashboard</a>
+          <a class="nav-link" href="/admin/productos"><i class="fa-solid fa-boxes-stacked me-1"></i> Productos</a>
+          <a class="nav-link active" href="/admin/clientes"><i class="fa-solid fa-users me-1"></i> Clientes</a>
+          <a class="btn btn-outline-danger btn-sm px-3 ms-lg-2" href="/logout"><i class="fa-solid fa-right-from-bracket me-1"></i> Salir</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- CONTENEDOR DEL FORMULARIO                  -->
+  <!-- ========================================== -->
+  <div class="container my-auto py-4">
+    <div class="row justify-content-center">
+      <!-- Mismo ancho y distribución limpia que el de productos -->
+      <div class="col-lg-8">
+        
+        <div class="card card-form bg-white p-4">
+          <div class="card-body">
+            
+            <!-- Encabezado Dinámico -->
+            <div class="d-flex align-items-center gap-3 border-bottom pb-3 mb-4">
+              <div class="bg-warning-subtle text-warning px-3 py-2 rounded-3 fs-3">
+                <i class="fa-solid {% if cliente %}fa-user-pen{% else %}fa-user-plus{% endif %}"></i>
+              </div>
+              <div>
+                <h2 class="h4 fw-bold text-dark m-0">{{ titulo }}</h2>
+                <p class="text-muted small m-0">Ingresa la información básica para la ficha del cliente</p>
+              </div>
+            </div>
+
+            <!-- Formulario POST -->
+            <form method="POST">
+              
+              <!-- Fila Principal: Nombre Completo (Ocupa toda la línea superior) -->
+              <div class="mb-4">
+                <label class="form-label text-dark fw-semibold small">Nombre Completo</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-user"></i></span>
+                  <input type="text" class="form-control form-control-lg bg-light border-start-0 fs-6" name="nombre" 
+                         value="{{ cliente.nombre if cliente else '' }}" placeholder="Ej. Juan Pérez" required>
+                </div>
+              </div>
+
+              <!-- Fila de Dos Columnas (Igual que Precio y Peso en productos) -->
+              <div class="row">
+                
+                <!-- Columna Izquierda: Correo -->
+                <div class="col-md-6 mb-4">
+                  <label class="form-label text-dark fw-semibold small">Correo Electrónico</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-envelope"></i></span>
+                    <input type="email" class="form-control form-control-lg bg-light border-start-0 fs-6" name="email" 
+                           value="{{ cliente.email if cliente else '' }}" placeholder="ejemplo@correo.com" required>
+                  </div>
+                </div>
+
+                <!-- Columna Derecha: Teléfono -->
+                <div class="col-md-6 mb-4">
+                  <label class="form-label text-dark fw-semibold small">Teléfono / Celular <span class="text-muted fw-normal">(Opcional)</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-phone"></i></span>
+                    <input type="text" class="form-control form-control-lg bg-light border-start-0 fs-6" name="telefono" 
+                           value="{{ cliente.telefono if cliente else '' }}" placeholder="Ej. 987654321">
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Botonera de Acción Inferior Derecha -->
+              <div class="d-flex align-items-center justify-content-end gap-2 border-top pt-3 mt-2">
+                <a href="/admin/clientes" class="btn btn-light border fw-semibold px-4 py-2">Cancelar</a>
+                <button type="submit" class="btn btn-warning text-dark fw-bold px-4 py-2 shadow-sm">
+                  Guardar Cambios <i class="fa-solid fa-floppy-disk ms-1"></i>
+                </button>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- PIE DE PÁGINA                              -->
+  <!-- ========================================== -->
+  <footer class="text-center text-muted py-3 mt-auto border-top bg-white">
+    <small>&copy; 2026 <strong>Minimarket Nelly</strong>. Control de Clientes.</small>
+  </footer>
+
+  <!-- Bootstrap 5 CDN JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
