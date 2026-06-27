@@ -89,7 +89,7 @@ CLIENTES = [
     {"id": 49, "nombre": "Emilia Fuentes",       "email": "emilia.fue@gmail.com",         "telefono": "948690123", "fecha_registro": "25/06"},
     {"id": 50, "nombre": "Vicente Barrera",      "email": "vicente.bar@gmail.com",        "telefono": "970812345", "fecha_registro": "26/06"},
 ]
-next_cliente_id = 3
+next_cliente_id = 51
 
 # ---------- VENTAS REGISTRADAS ----------
 VENTAS = [
